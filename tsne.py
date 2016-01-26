@@ -1,4 +1,4 @@
-#
+#coding: utf-8
 #  tsne.py
 #
 # Implementation of t-SNE in Python. The implementation was tested on Python 2.7.10, and it requires a working
@@ -11,9 +11,12 @@
 #  Created by Laurens van der Maaten on 20-12-08.
 #  Copyright (c) 2008 Tilburg University. All rights reserved.
 
+
 import numpy as Math
 import pylab as Plot
 import argparse
+import utils
+
 
 def Hbeta(D = Math.array([]), beta = 1.0):
 	"""Compute the perplexity and the P-row for a specific value of the precision of a Gaussian distribution."""
@@ -109,8 +112,8 @@ def tsne(X = Math.array([]), no_dims = 2, initial_dims = 50, perplexity = 30.0):
 	# Initialize variables
 	X = pca(X, initial_dims).real;
 	(n, d) = X.shape;
-	#max_iter = 1000;
-	max_iter = 1000*2;
+	max_iter = 1000;
+	#max_iter = 1000*2;
 	initial_momentum = 0.5;
 	final_momentum = 0.8;
 	eta = 500;
@@ -175,13 +178,16 @@ def main(args):
         print "Run Y = tsne.tsne(X, no_dims, perplexity) to perform t-SNE on your dataset."
         print "Running example on 2,500 MNIST digits..."
 
-	X = Math.loadtxt(vector_file);
+	#X = Math.loadtxt(vector_file);
+        X = utils.read_vector(vector_file).values()
+        X = Math.array(X)
+
         Y = tsne(X, 2, 50, 20.0);
         cm = Plot.cm.get_cmap('RdYlBu')
         with open(vector_file + '.tsne', 'w') as f:
                 log = ''
                 for i in xrange(0, len(Y[:,0])):
-                        log +=  "%f %f\n" % (Y[:,0][0],Y[:,1][0])
+                        log +=  "%f %f\n" % (Y[:,0][i],Y[:,1][i])
                 f.write(log)
 
         if label_file != None:
@@ -189,9 +195,21 @@ def main(args):
                 #sc = Plot.scatter(Y[:,0], Y[:,1], s=50, c=labels, cmap=cm)
                 sc = Plot.scatter(Y[:,0], Y[:,1], s=50, c=labels)
                 Plot.colorbar(sc)
-                Plot.show();
+                #Plot.show();
                 Plot.savefig(img_file)
 
+# 保存したtsne済みの *.tsneをロードして描画
+def load(args):
+        vector_file = args.vector_file
+        label_file = args.label_file
+        img_file = vector_file + ".png"
+
+	X = Math.loadtxt(vector_file);
+        labels = Math.loadtxt(label_file);
+        sc = Plot.scatter(Y[:,0], Y[:,1], s=50, c=labels)
+        Plot.colorbar(sc)
+        Plot.show();
+        Plot.savefig(img_file)
 
 if __name__ == "__main__":
         parser = argparse.ArgumentParser(description='')
