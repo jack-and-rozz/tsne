@@ -13,7 +13,9 @@
 
 
 import numpy as Math
-import pylab as Plot
+#import pylab as Plot
+import matplotlib.pyplot as Plot
+
 import argparse
 import utils
 
@@ -178,8 +180,8 @@ def main(args):
         print "Run Y = tsne.tsne(X, no_dims, perplexity) to perform t-SNE on your dataset."
         print "Running example on 2,500 MNIST digits..."
 
-	#X = Math.loadtxt(vector_file);
-        X = utils.read_vector(vector_file).values()
+	X = Math.loadtxt(vector_file);
+        #X = utils.read_vector(vector_file).values()
         X = Math.array(X)
 
         Y = tsne(X, 2, 50, 20.0);
@@ -204,7 +206,7 @@ def load(args):
         label_file = args.label_file
         img_file = vector_file + ".png"
 
-	X = Math.loadtxt(vector_file);
+	Y = Math.loadtxt(vector_file);
         labels = Math.loadtxt(label_file);
         sc = Plot.scatter(Y[:,0], Y[:,1], s=50, c=labels)
         Plot.colorbar(sc)
@@ -214,9 +216,15 @@ def load(args):
 if __name__ == "__main__":
         parser = argparse.ArgumentParser(description='')
         parser.add_argument('vector_file', help='vector filename')
+        parser.add_argument('--exec_type', default='calc', help='calc | load')
         parser.add_argument('--label_file', default=None,help='vector filename')
         args = parser.parse_args()
-        main(args)
+        exec_type = args.exec_type
+        if exec_type == "calc":
+                main(args)
+        elif exec_type == "load":
+                load(args)
+        #main(args)
     
 
 
